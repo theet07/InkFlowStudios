@@ -268,13 +268,17 @@
             const user = users.find(u => u.email === email && u.password === password);
             
             if (user) {
-                // Login bem-sucedido
+                // Login bem-sucedido - usar as chaves corretas
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('currentUser', user.email);
+                
                 const loginData = {
                     isLoggedIn: true,
                     user: {
                         id: user.id,
                         email: user.email,
-                        name: user.name || user.email // Incluir nome se disponível
+                        name: user.name || user.email
                     },
                     loginTime: new Date().toISOString()
                 };

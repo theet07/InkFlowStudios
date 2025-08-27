@@ -200,7 +200,7 @@
                 firstTattoo: formData.get('first-tattoo') === 'on',
                 status: 'pending',
                 date: new Date().toISOString(),
-                userEmail: localStorage.getItem('userEmail') || 'guest'
+                userEmail: localStorage.getItem('userEmail') || localStorage.getItem('currentUser') || 'guest'
             };
             
             // Salvar no localStorage

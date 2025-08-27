@@ -92,9 +92,9 @@
             }
             
             // Carregar dados do usuário
-            const userEmail = localStorage.getItem('userEmail');
+            const userEmail = localStorage.getItem('userEmail') || localStorage.getItem('currentUser');
             if (userEmail) {
-                document.getElementById('user-name').textContent = userEmail;
+                document.getElementById('user-name').textContent = userEmail.split('@')[0];
             }
             
             // Carregar agendamentos
@@ -105,11 +105,13 @@
         let appointments = [];
 
         function loadAppointments() {
-            const userEmail = localStorage.getItem('userEmail');
+            const userEmail = localStorage.getItem('userEmail') || localStorage.getItem('currentUser');
             const allAppointments = JSON.parse(localStorage.getItem('appointments') || '[]');
             
             // Filtrar agendamentos do usuário logado
-            appointments = allAppointments.filter(apt => apt.userEmail === userEmail);
+            appointments = allAppointments.filter(apt => 
+                apt.userEmail === userEmail || apt.userEmail === localStorage.getItem('currentUser')
+            );
             renderAppointments();
         }
 
