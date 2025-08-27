@@ -417,37 +417,29 @@
             // Carregar agendamentos (localStorage + WhatsApp)
             let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
             
-            // Dados do WhatsApp (baseados nos agendamentos reais)
-            const whatsappData = [
-                {
-                    id: 'wa_1756325421187',
-                    name: 'matheus gostoso',
-                    phone: '5511964409607',
-                    service: 'Tatuagem (WhatsApp)',
-                    description: 'dark - braço - grande',
-                    date: '2025-08-27T20:10:21.187Z',
-                    status: 'pending',
-                    source: 'whatsapp',
-                    userEmail: 'whatsapp-user'
-                },
-                {
-                    id: 'wa_1756326903669',
-                    name: '1',
-                    phone: '5511964409607',
-                    service: 'Tatuagem (WhatsApp)',
-                    description: '1 - 1 - pequena',
-                    date: '2025-08-27T20:35:03.669Z',
-                    status: 'pending',
-                    source: 'whatsapp',
-                    userEmail: 'whatsapp-user'
-                }
-            ];
-            
-            // Combinar agendamentos web + WhatsApp
-            const combined = [...appointments, ...whatsappData];
-            appointments = combined.filter((apt, i, arr) => 
-                arr.findIndex(a => a.id === apt.id) === i
-            );
+            // Carregar agendamentos do WhatsApp via API
+            fetch('http://localhost:3001/api/whatsapp-appointments')
+                .then(response => response.json())
+                .then(whatsappData => {
+                    const combined = [...appointments, ...whatsappData];
+                    const unique = combined.filter((apt, i, arr) => 
+                        arr.findIndex(a => a.id === apt.id) === i
+                    );
+                    loadAppointments(unique);
+                    
+                    // Atualizar contadores
+                    const today = new Date().toDateString();
+                    const todayCount = unique.filter(apt => new Date(apt.date).toDateString() === today).length;
+                    const pendingCount = unique.filter(apt => apt.status === 'pending').length;
+                    
+                    document.getElementById('totalAppointments').textContent = unique.length;
+                    document.getElementById('todayAppointments').textContent = todayCount;
+                    document.getElementById('pendingAppointments').textContent = pendingCount;
+                })
+                .catch(error => {
+                    console.log('WhatsApp offline - usando dados locais');
+                    loadAppointments(appointments);
+                });
             const today = new Date().toDateString();
             const todayCount = appointments.filter(apt => new Date(apt.date).toDateString() === today).length;
             const pendingCount = appointments.filter(apt => apt.status === 'pending').length;
