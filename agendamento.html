@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento - Ink Flow Estúdio de Tatuagem</title>
+    <meta name="description" content="Agende sua tatuagem no Ink Flow. Formulário online rápido e fácil. São Paulo, SP.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">INK FLOW</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="portfolio.html">Portfólio</a></li>
+                <li><a href="servicos.html">Serviços</a></li>
+                <li><a href="agendamento.html">Agendamento</a></li>
+                <li><a href="contato.html">Contato</a></li>
+                <li id="meus-agendamentos-link" style="display: none;"><a href="meus-agendamentos.html">Meus Agendamentos</a></li>
+            </ul>
+            <a href="login.html" style="color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--accent-red); border-radius: 4px; transition: all 0.3s ease;">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section style="text-align: center; margin: 0 auto; padding: 4rem 2rem; max-width: 900px; width: 100%;">
+            <h2>Agende sua Tatuagem</h2>
+            <p style="text-align: center; color: var(--text-gray); margin-bottom: 3rem;">
+                Preencha o formulário abaixo e entraremos em contato em até 24 horas
+            </p>
+
+            <div class="agendamento-grid" style="display: grid; grid-template-columns: 1fr; gap: 3rem; max-width: 600px; margin: 0 auto;">
+                <div>
+                    <form id="booking-form" action="https://formspree.io/f/mjkevvdb" method="POST" style="background-color: var(--secondary-dark); padding: 2rem; border-radius: 10px;">
+                        <input type="hidden" name="_subject" value="Novo Agendamento - Ink Flow">
+                        <input type="hidden" name="_captcha" value="false">
+
+                        <div class="form-group">
+                            <label for="name">Nome Completo *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Telefone/WhatsApp *</label>
+                            <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">Idade *</label>
+                            <input type="number" id="age" name="age" min="18" max="100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="service">Tipo de Serviço *</label>
+                            <select id="service" name="service" required>
+                                <option value="">Selecione um serviço</option>
+                                <option value="tatuagem-artistica">Tatuagem Artística</option>
+                                <option value="piercing">Piercing</option>
+                                <option value="cover-up">Cover-up</option>
+                                <option value="fine-line">Fine Line</option>
+                                <option value="aquarela">Aquarela</option>
+                                <option value="geometrica">Geométrica</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="artist">Artista Preferido</label>
+                            <select id="artist" name="artist">
+                                <option value="">Sem preferência</option>
+                                <option value="marcus">Marcus Silva (Realismo)</option>
+                                <option value="ana">Ana Costa (Aquarela/Fine Line)</option>
+                                <option value="rafael">Rafael Santos (Geométrico)</option>
+                                <option value="carla">Carla Mendes (Blackwork)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="size">Tamanho Aproximado</label>
+                            <select id="size" name="size">
+                                <option value="">Selecione o tamanho</option>
+                                <option value="pequena">Pequena (até 5cm)</option>
+                                <option value="media">Média (5-15cm)</option>
+                                <option value="grande">Grande (15-30cm)</option>
+                                <option value="muito-grande">Muito Grande (30cm+)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Local do Corpo</label>
+                            <input type="text" id="location" name="location" placeholder="Ex: braço, perna, costas...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Descrição da Ideia *</label>
+                            <textarea id="description" name="description" rows="4" placeholder="Descreva sua ideia de tatuagem em detalhes..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="budget">Orçamento Estimado</label>
+                            <select id="budget" name="budget">
+                                <option value="">Selecione uma faixa</option>
+                                <option value="ate-300">Até R$ 300</option>
+                                <option value="300-600">R$ 300 - R$ 600</option>
+                                <option value="600-1000">R$ 600 - R$ 1.000</option>
+                                <option value="1000-1500">R$ 1.000 - R$ 1.500</option>
+                                <option value="acima-1500">Acima de R$ 1.500</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="availability">Disponibilidade *</label>
+                            <textarea id="availability" name="availability" rows="3" placeholder="Informe seus dias e horários disponíveis..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="first-tattoo">
+                                <input type="checkbox" id="first-tattoo" name="first-tattoo" style="width: auto; margin-right: 0.5rem;">
+                                Esta é minha primeira tatuagem
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="terms">
+                                <input type="checkbox" id="terms" name="terms" required style="width: auto; margin-right: 0.5rem;">
+                                Concordo com os <a href="termos-condicoes.html" target="_blank" style="color: var(--accent-red);">termos e condições</a> *
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn" style="width: 100%; font-size: 1.1rem;">
+                            Enviar Solicitação
+                        </button>
+                    </form>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+                    <div style="background-color: var(--secondary-dark); padding: 2rem; border-radius: 10px; border: 1px solid #333;">
+                        <h3 style="color: var(--accent-red); margin-bottom: 1.5rem;">Políticas</h3>
+                        <ul style="color: var(--text-gray); line-height: 1.6; list-style: none; padding: 0;">
+                            <li>• Idade mínima: 18 anos</li>
+                            <li>• Consulta gratuita</li>
+                            <li>• Entrada de 50%</li>
+                            <li>• Retoque grátis (30 dias)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background-color: var(--secondary-dark); padding: 2rem; border-radius: 10px; border: 1px solid #333;">
+                        <h3 style="color: var(--accent-red); margin-bottom: 1.5rem;">Horários</h3>
+                        <div style="color: var(--text-gray);">
+                            <p>Segunda a Sexta: 10:00 - 20:00</p>
+                            <p>Sábado: 09:00 - 18:00</p>
+                            <p style="color: var(--accent-red);">Domingo: Fechado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="text-align: center; background-color: var(--secondary-dark); margin: 0 auto; padding: 4rem 2rem; max-width: 800px; width: 100%;">
+            <h2>Precisa de ajuda?</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; color: var(--text-gray);">Nossa equipe está pronta para esclarecer suas dúvidas</p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <a href="https://wa.me/15144373894" class="btn" target="_blank">💬 WhatsApp</a>
+                <a href="tel:+15144373894" class="btn btn-outline">📞 Ligar</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+            <a href="https://www.instagram.com/inkflowstudios" target="_blank" style="color: var(--text-gray); text-decoration: none; padding: 0.5rem; border: 1px solid #333; border-radius: 4px;">Instagram</a>
+            <a href="https://wa.me/15144373894" target="_blank" style="color: var(--text-gray); text-decoration: none; padding: 0.5rem; border: 1px solid #333; border-radius: 4px;">WhatsApp</a>
+        </div>
+        <p>&copy; 2025 Ink Flow Estúdio. Todos os direitos reservados.</p>
+        <p>São Paulo, SP - Brasil</p>
+    </footer>
+
+    <script src="js/unified-auth.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Sistema de agendamento integrado
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const formData = new FormData(this);
+            const appointmentData = {
+                id: Date.now(),
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                age: formData.get('age'),
+                service: formData.get('service'),
+                artist: formData.get('artist'),
+                size: formData.get('size'),
+                location: formData.get('location'),
+                description: formData.get('description'),
+                budget: formData.get('budget'),
+                availability: formData.get('availability'),
+                firstTattoo: formData.get('first-tattoo') === 'on',
+                status: 'pending',
+                date: new Date().toISOString(),
+                userEmail: localStorage.getItem('userEmail') || 'guest'
+            };
+            
+            // Salvar no localStorage
+            const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+            appointments.push(appointmentData);
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            
+            // Enviar para Formspree também
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    alert('✅ Agendamento enviado com sucesso! Entraremos em contato em até 24 horas.');
+                    this.reset();
+                    window.location.href = 'obrigado.html';
+                } else {
+                    alert('❌ Erro ao enviar. Tente novamente ou entre em contato via WhatsApp.');
+                }
+            }).catch(error => {
+                // Mesmo com erro no Formspree, o agendamento foi salvo localmente
+                alert('✅ Agendamento salvo! Entraremos em contato em breve.');
+                this.reset();
+                window.location.href = 'obrigado.html';
+            });
+        });
+        
+        // Máscara para telefone
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 11) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 7) {
+                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
