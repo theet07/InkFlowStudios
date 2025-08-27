@@ -414,8 +414,25 @@
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             document.getElementById('totalUsers').textContent = users.length;
             
-            // Carregar agendamentos (simulado)
-            const appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+            // Carregar agendamentos (localStorage + WhatsApp)
+            let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+            
+            // Tentar sincronizar com WhatsApp
+            try {
+                fetch('/api/sync-whatsapp')
+                    .then(r => r.json())
+                    .then(whatsappAppts => {
+                        const combined = [...appointments, ...whatsappAppts];
+                        const unique = combined.filter((apt, i, arr) => 
+                            arr.findIndex(a => a.id === apt.id) === i
+                        );
+                        localStorage.setItem('appointments', JSON.stringify(unique));
+                        loadAppointments(unique);
+                    })
+                    .catch(() => console.log('WhatsApp sync offline'));
+            } catch (e) {
+                console.log('WhatsApp sync não disponível');
+            }
             const today = new Date().toDateString();
             const todayCount = appointments.filter(apt => new Date(apt.date).toDateString() === today).length;
             const pendingCount = appointments.filter(apt => apt.status === 'pending').length;
