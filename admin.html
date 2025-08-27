@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Ink Flow</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">INK FLOW</a>
+            <ul class="nav-links">
+                <li><a href="admin.html">Dashboard</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+        <h1 style="color: var(--accent-red); margin-bottom: 2rem;">Painel Administrativo</h1>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+            <div class="card">
+                <h3>Agendamentos</h3>
+                <p id="total-bookings">0 agendamentos</p>
+            </div>
+            <div class="card">
+                <h3>Usuários</h3>
+                <p id="total-users">0 usuários</p>
+            </div>
+            <div class="card">
+                <h3>Status</h3>
+                <p style="color: var(--accent-red);">Sistema Online</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Usuários Cadastrados</h3>
+            <div id="users-list"></div>
+        </div>
+    </main>
+
+    <script>
+        // Verificar se é admin
+        const loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
+        if (!loginData.isAdmin) {
+            alert('Acesso negado!');
+            window.location.href = 'login.html';
+        }
+
+        // Carregar dados
+        function loadDashboard() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            document.getElementById('total-users').textContent = users.length + ' usuários';
+            
+            let usersList = '<table style="width: 100%; color: var(--text-light);">';
+            usersList += '<tr><th>ID</th><th>Email</th><th>Data Cadastro</th></tr>';
+            users.forEach(user => {
+                usersList += `<tr><td>${user.id}</td><td>${user.email}</td><td>${new Date(user.createdAt).toLocaleDateString()}</td></tr>`;
+            });
+            usersList += '</table>';
+            document.getElementById('users-list').innerHTML = usersList;
+        }
+
+        function logout() {
+            localStorage.removeItem('loginData');
+            window.location.href = 'login.html';
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio - Ink Flow Estúdio de Tatuagem</title>
+    <meta name="description" content="Veja nosso portfólio com os melhores trabalhos de tatuagem em São Paulo. Realismo, aquarela, geométrico e muito mais.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">INK FLOW</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="portfolio.html">Portfólio</a></li>
+                <li><a href="servicos.html">Serviços</a></li>
+                <li><a href="#" onclick="checkLoginForBooking()">Agendamento</a></li>
+                <li><a href="contato.html">Contato</a></li>
+                <li id="meus-agendamentos-link" style="display: none;"><a href="meus-agendamentos.html">Meus Agendamentos</a></li>
+            </ul>
+            <a href="login.html" style="color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--accent-red); border-radius: 4px; transition: all 0.3s ease;">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <section style="text-align: center; margin: 0 auto; padding: 4rem 2rem; max-width: 800px; width: 100%;">
+            <h2>Especialidades Técnicas</h2>
+            <p style="text-align: center; color: var(--text-gray); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Conheça nossas especialidades em diferentes técnicas de tatuagem, cada uma desenvolvida por artistas especializados com anos de experiência.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; align-items: stretch;">
+                <a href="realismo.html" style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; color: inherit; transition: all 0.3s ease; text-decoration: none; display: block;" onmouseover="this.style.borderColor='var(--accent-red)'" onmouseout="this.style.borderColor='#333'">
+                    <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Realismo</h3>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">Retratos e trabalhos hiper-realistas</p>
+                    <p style="color: var(--text-white); font-size: 0.9rem;">Por Marcus Silva</p>
+                </a>
+                
+                <a href="aquarela.html" style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; color: inherit; transition: all 0.3s ease; text-decoration: none; display: block;" onmouseover="this.style.borderColor='var(--accent-red)'" onmouseout="this.style.borderColor='#333'">
+                    <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Aquarela</h3>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">Técnica exclusiva com cores vibrantes</p>
+                    <p style="color: var(--text-white); font-size: 0.9rem;">Por Ana Costa</p>
+                </a>
+                
+                <a href="geometrico.html" style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; color: inherit; transition: all 0.3s ease; text-decoration: none; display: block;" onmouseover="this.style.borderColor='var(--accent-red)'" onmouseout="this.style.borderColor='#333'">
+                    <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Geométrico</h3>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">Mandalas e padrões precisos</p>
+                    <p style="color: var(--text-white); font-size: 0.9rem;">Por Rafael Santos</p>
+                </a>
+                
+                <a href="blackwork.html" style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; color: inherit; transition: all 0.3s ease; text-decoration: none; display: block;" onmouseover="this.style.borderColor='var(--accent-red)'" onmouseout="this.style.borderColor='#333'">
+                    <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Blackwork</h3>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">Arte ornamental em preto</p>
+                    <p style="color: var(--text-white); font-size: 0.9rem;">Por Carla Mendes</p>
+                </a>
+                
+                <a href="fineline.html" style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; color: inherit; transition: all 0.3s ease; text-decoration: none; display: block;" onmouseover="this.style.borderColor='var(--accent-red)'" onmouseout="this.style.borderColor='#333'">
+                    <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Fine Line</h3>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">Traços delicados e minimalistas</p>
+                    <p style="color: var(--text-white); font-size: 0.9rem;">Por Ana Costa</p>
+                </a>
+                
+                <a href="tradicional.html" style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; color: inherit; transition: all 0.3s ease; text-decoration: none; display: block;" onmouseover="this.style.borderColor='var(--accent-red)'" onmouseout="this.style.borderColor='#333'">
+                    <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Tradicional</h3>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">Estilo clássico old school</p>
+                    <p style="color: var(--text-white); font-size: 0.9rem;">Por Rafael Santos</p>
+                </a>
+            </div>
+            
+
+        </section>
+
+        <section style="text-align: center; background-color: var(--secondary-dark); margin: 0 auto; padding: 4rem 2rem; max-width: 800px; width: 100%;">
+            <h2>Gostou do que viu?</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; color: var(--text-gray);">
+                Agende uma consulta gratuita e vamos criar sua tatuagem dos sonhos
+            </p>
+            <a href="#" onclick="checkLoginForBooking()" class="btn" style="margin-right: 1rem;">Agendar Consulta</a>
+            <a href="contato.html" class="btn btn-outline">Falar Conosco</a>
+        </section>
+    </main>
+
+    <footer>
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+            <a href="https://www.instagram.com/inkflowstudios" target="_blank" style="color: var(--text-gray); text-decoration: none; padding: 0.5rem; border: 1px solid #333; border-radius: 4px; transition: all 0.3s ease;" aria-label="Instagram">Instagram</a>
+            <a href="https://www.tiktok.com/@inkflowstudios" target="_blank" style="color: var(--text-gray); text-decoration: none; padding: 0.5rem; border: 1px solid #333; border-radius: 4px; transition: all 0.3s ease;" aria-label="TikTok">TikTok</a>
+            <a href="https://wa.me/15144373894" target="_blank" style="color: var(--text-gray); text-decoration: none; padding: 0.5rem; border: 1px solid #333; border-radius: 4px; transition: all 0.3s ease;" aria-label="WhatsApp">WhatsApp</a>
+            <a href="mailto:inkflowstudios07@gmail.com" target="_blank" style="color: var(--text-gray); text-decoration: none; padding: 0.5rem; border: 1px solid #333; border-radius: 4px; transition: all 0.3s ease;" aria-label="Email">Email</a>
+        </div>
+        <div style="text-align: center; color: var(--text-gray); font-size: 0.9rem;">
+            <p>&copy; 2024 Ink Flow Estúdio de Tatuagem Ltda. Todos os direitos reservados.</p>
+            <p>São Paulo, SP - Brasil | CNPJ: 00.000.000/0001-00</p>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Atualizar navegação baseada no status de login
+        if (window.authSystem) {
+            window.authSystem.updateNavigation();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Agendamentos - Ink Flow</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .client-area {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: 80px;
+        }
+        .welcome-section {
+            background: var(--gradient-card);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .appointments-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .appointment-card {
+            background: var(--gradient-card);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--tertiary-dark);
+        }
+        .appointment-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-confirmado { background: #4CAF50; color: white; }
+        .status-pendente { background: #FF9800; color: white; }
+        .status-cancelado { background: #F44336; color: white; }
+        .logout-btn {
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">INK FLOW</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="portfolio.html">Portfólio</a></li>
+                <li><a href="servicos.html">Serviços</a></li>
+                <li><a href="agendamento.html">Agendamento</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </nav>
+    </header>
+
+    <main class="client-area">
+        <div class="welcome-section">
+            <h1>Bem-vindo, <span id="user-name">Cliente</span>!</h1>
+            <p>Aqui você pode acompanhar todos os seus agendamentos</p>
+        </div>
+
+        <section>
+            <h2>Meus Agendamentos</h2>
+            <div class="appointments-grid" id="appointments-list">
+                <!-- Agendamentos serão carregados aqui -->
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.authSystem.isLoggedIn()) {
+                alert('Você precisa fazer login para acessar esta página.');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Carregar dados do usuário
+            const userData = window.authSystem.getCurrentUser();
+            if (userData) {
+                document.getElementById('user-name').textContent = userData.name || userData.email;
+            }
+            
+            // Carregar agendamentos
+            loadAppointments();
+        });
+
+        // Carregar agendamentos do banco
+        let appointments = [];
+
+        async function loadAppointments() {
+            const userData = window.authSystem.getCurrentUser();
+            if (userData) {
+                try {
+                    const userId = userData.id || userData.email;
+                    appointments = await API.getAppointmentsByUser(userId);
+                    console.log('Agendamentos carregados:', appointments);
+                    renderAppointments();
+                } catch (error) {
+                    console.log('Erro ao carregar agendamentos:', error);
+                    appointments = [];
+                    renderAppointments();
+                }
+            }
+        }
+
+        function renderAppointments() {
+            const container = document.getElementById('appointments-list');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-gray);">Você ainda não possui agendamentos.</p>';
+                return;
+            }
+
+            container.innerHTML = appointments.map(appointment => `
+                <div class="appointment-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 style="color: var(--accent-red);">${appointment.service || 'Serviço não especificado'}</h3>
+                        <span class="appointment-status status-${appointment.status}">${appointment.status.toUpperCase()}</span>
+                    </div>
+                    <p><strong>Nome:</strong> ${appointment.name}</p>
+                    <p><strong>Telefone:</strong> ${appointment.phone}</p>
+                    <p><strong>Idade:</strong> ${appointment.age} anos</p>
+                    <p><strong>Artista:</strong> ${appointment.artist || 'Sem preferência'}</p>
+                    <p><strong>Tamanho:</strong> ${appointment.size || 'Não especificado'}</p>
+                    <p><strong>Local:</strong> ${appointment.location || 'Não especificado'}</p>
+                    <p><strong>Orçamento:</strong> ${appointment.budget || 'Não especificado'}</p>
+                    <p><strong>Descrição:</strong> ${appointment.description}</p>
+                    <p><strong>Disponibilidade:</strong> ${appointment.availability}</p>
+                    <p><strong>Primeira tatuagem:</strong> ${appointment.firstTattoo ? 'Sim' : 'Não'}</p>
+                    <p><strong>Data de solicitação:</strong> ${new Date(appointment.createdAt).toLocaleDateString('pt-BR')}</p>
+                    ${appointment.status === 'pendente' ? 
+                        `<button onclick="cancelAppointment(${appointment.id})" style="background: var(--accent-red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-top: 1rem;">Cancelar Solicitação</button>` : 
+                        ''
+                    }
+                </div>
+            `).join('');
+        }
+
+        async function cancelAppointment(id) {
+            if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
+                try {
+                    const appointment = appointments.find(a => a.id === id);
+                    if (appointment) {
+                        appointment.status = 'cancelado';
+                        await API.updateAppointment(id, appointment);
+                        await loadAppointments();
+                        alert('Agendamento cancelado com sucesso!');
+                    }
+                } catch (error) {
+                    alert('Erro ao cancelar agendamento.');
+                }
+            }
+        }
+
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                window.authSystem.logout();
+            }
+        }
+
+        // Remover esta linha pois agora o carregamento é feito no DOMContentLoaded
+    </script>
+</body>
+</html>
