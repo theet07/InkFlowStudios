@@ -267,6 +267,14 @@
         </div>
     </footer>
 
-
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script>
+        // Atualizar navegação baseada no status de login
+        if (window.authSystem) {
+            window.authSystem.updateNavigation();
+        }
+    </script>
 </body>
 </html>
