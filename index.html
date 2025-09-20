@@ -7,11 +7,15 @@
     <meta name="description" content="Ink Flow - O melhor estúdio de tatuagem de São Paulo. Tatuagens artísticas, piercing e arte corporal com os melhores profissionais.">
     <meta name="keywords" content="tatuagem São Paulo, estúdio de tatuagem, tattoo, piercing, arte corporal, tatuador profissional">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico?v=5">
-    <link rel="shortcut icon" href="favicon.ico?v=5">
+    <link rel="stylesheet" href="css/carousel-clean.css">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/ChatGPT Image 16 de set. de 2025, 15_29_21.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/ChatGPT Image 16 de set. de 2025, 15_29_21.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="images/ChatGPT Image 16 de set. de 2025, 15_29_21.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/ChatGPT Image 16 de set. de 2025, 15_29_21.png">
+    <link rel="shortcut icon" href="images/ChatGPT Image 16 de set. de 2025, 15_29_21.png">
 </head>
 <body>
-    <header>
+    <header style="background-image: url('images/lalala.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
         <nav>
             <a href="index.html" class="logo">INK FLOW</a>
             <ul class="nav-links">
@@ -23,14 +27,19 @@
                 <li><a href="contato.html">Contato</a></li>
                 <li id="meus-agendamentos-link" style="display: none;"><a href="meus-agendamentos.html">Meus Agendamentos</a></li>
             </ul>
-            <a href="login.html" style="color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--accent-red); border-radius: 4px; transition: all 0.3s ease;">Login</a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button id="translate-btn" style="background: none; border: 1px solid var(--accent-red); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; transition: all 0.3s ease;" title="Translate to English">
+                    🌐 EN
+                </button>
+                <a href="login.html" style="color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--accent-red); border-radius: 4px; transition: all 0.3s ease;">Login</a>
+            </div>
         </nav>
     </header>
 
     <main>
-        <section class="hero">
+        <section class="hero" style="background-image: url('images/lalala.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
             <div class="hero-content">
-                <h1>INK FLOW</h1>
+                <h1 style="color: #D00000;">INK FLOW</h1>
                 <p>Transformando pele em arte desde 2025</p>
                 <div style="margin-top: 2rem;">
                     <a href="portfolio.html" class="btn">Ver Portfólio</a>
@@ -40,13 +49,25 @@
         </section>
 
         <section class="section">
-            <h2>Portfólio Selecionado</h2>
+            <h2>Arte na Pele</h2>
             <p style="text-align: center; color: var(--text-gray); margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
                 Conheça alguns dos nossos trabalhos mais representativos em diferentes técnicas e estilos artísticos
             </p>
             <div style="background: var(--secondary-dark); border: 1px solid #333; border-radius: 8px; padding: 3rem; text-align: center; margin-bottom: 2rem;">
                 <h3 style="color: var(--accent-red); margin-bottom: 1rem;">Portfólio Visual</h3>
-                <p style="color: var(--text-gray);">Galeria de trabalhos disponível na seção Portfólio</p>
+                <div class="carousel-container" style="position: relative; max-width: 600px; margin: 0 auto; overflow: hidden; border-radius: 8px;">
+                    <div class="carousel-track" style="display: flex; transition: transform 0.5s ease;">
+                        <img src="images/blackwork-tattoo.jpg" alt="Blackwork Tattoo" style="width: 100%; flex-shrink: 0; height: 300px; object-fit: cover;">
+                        <img src="images/watercolor-tattoo.jpg" alt="Watercolor Tattoo" style="width: 100%; flex-shrink: 0; height: 300px; object-fit: cover;">
+                        <img src="images/messi-tattoo.jpg" alt="Realismo Tattoo" style="width: 100%; flex-shrink: 0; height: 300px; object-fit: cover;">
+                        <img src="images/mandala.jpg" alt="Mandala Tattoo" style="width: 100%; flex-shrink: 0; height: 300px; object-fit: cover;">
+                        <img src="images/lobo geo.jpg" alt="Geométrica Tattoo" style="width: 100%; flex-shrink: 0; height: 300px; object-fit: cover;">
+                        <img src="images/flor.jpg" alt="Fine Line Tattoo" style="width: 100%; flex-shrink: 0; height: 300px; object-fit: cover;">
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveCarousel(-1)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(208,0,0,0.8); color: white; border: none; padding: 10px; border-radius: 50%; cursor: pointer;">‹</button>
+                    <button class="carousel-btn next" onclick="moveCarousel(1)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(208,0,0,0.8); color: white; border: none; padding: 10px; border-radius: 50%; cursor: pointer;">›</button>
+                </div>
+                <p style="color: var(--text-gray); margin-top: 1rem;">Veja mais no nosso <span style="color: var(--accent-red); font-weight: bold;">portfólio</span> completo</p>
             </div>
         </section>
 
@@ -119,7 +140,25 @@
 
     <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
-    <script src="js/chatbot.js"></script>
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 6;
+        
+        function moveCarousel(direction) {
+            currentSlide += direction;
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            
+            const track = document.querySelector('.carousel-track');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+        
+        // Auto-play carousel
+        setInterval(() => moveCarousel(1), 4000);
+    </script>
+    <link rel="stylesheet" href="css/chatbot-styles.css">
+    <script src="js/chatbot-new.js"></script>
+    <script src="js/translator.js"></script>
     <script>
         // Atualizar navegação baseada no status de login
         if (window.authSystem) {

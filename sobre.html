@@ -23,7 +23,12 @@
                 <li><a href="contato.html">Contato</a></li>
                 <li id="meus-agendamentos-link" style="display: none;"><a href="meus-agendamentos.html">Meus Agendamentos</a></li>
             </ul>
-            <a href="login.html" style="color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--accent-red); border-radius: 4px; transition: all 0.3s ease;">Login</a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button id="translate-btn" style="background: none; border: 1px solid var(--accent-red); color: var(--text-light); padding: 0.5rem; border-radius: 4px; cursor: pointer; transition: all 0.3s ease;" title="Translate to English">
+                    🌐 EN
+                </button>
+                <a href="login.html" style="color: var(--text-light); text-decoration: none; padding: 0.5rem 1rem; border: 1px solid var(--accent-red); border-radius: 4px; transition: all 0.3s ease;">Login</a>
+            </div>
         </nav>
     </header>
 
@@ -222,6 +227,7 @@
     <script src="js/auth.js"></script>
     <script src="js/script.js"></script>
     <script src="js/chatbot.js"></script>
+    <script src="js/translator.js"></script>
     <script>
         // Atualizar navegação baseada no status de login
         if (window.authSystem) {

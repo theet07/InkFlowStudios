@@ -2,6 +2,13 @@
 class InkFlowChatbot {
     constructor() {
         this.isOpen = false;
+        this.conversationHistory = [];
+        this.userContext = {
+            name: null,
+            interests: [],
+            previousQuestions: [],
+            mood: 'neutral'
+        };
         this.responses = {
             'horario': 'Opa! 🕘 Funcionamos de segunda a sábado das 9h às 18h. Domingo só se você implorar muito (com agendamento) 😏',
             'preco': 'Eita, quer saber o preço né? 💸 Depende do tamanho da arte, meu chapa! Vai de R$200 até "vendeu o rim". Melhor agendar uma consulta pra não chorar depois! 😂',
@@ -26,11 +33,53 @@ class InkFlowChatbot {
             'cover': 'Cover-up é possível mas depende da tattoo velha! 🎭 Se for muito escura, vai virar um borrão artístico!'
         };
         this.init();
+        this.loadContext();
+        window.chatbot = this; // Referência global
     }
 
     init() {
         this.createChatbot();
         this.bindEvents();
+    }
+    
+    loadContext() {
+        const saved = localStorage.getItem('lily_context');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                this.conversationHistory = data.history || [];
+                this.userContext = { ...this.userContext, ...data.userContext };
+            } catch (e) {
+                console.log('Erro ao carregar contexto da Lily');
+            }
+        }
+    }
+    
+    async callGeminiAPI(message) {
+        const prompt = `Você é a Lily, assistente do Ink Flow Studios (estúdio de tatuagem em São Paulo). Seja profissional, divertida e use emojis. Responda de forma direta e concisa sobre tatuagens, preços, cuidados, estilos. Mantenha o tom descontraído mas profissional. Mensagens curtas e objetivas. Mensagem do usuário: ${message}`;
+        
+        try {
+            const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-goog-api-key': 'AIzaSyAyrkt9DFCPm5TK5saApydx1nP8vI4b9VE'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            });
+            
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || null;
+        } catch (error) {
+            console.error('Erro na API Gemini:', error);
+            return null;
+        }
     }
 
     createChatbot() {
@@ -43,12 +92,12 @@ class InkFlowChatbot {
                 </div>
                 <div id="chatbot-window" class="chatbot-window">
                     <div class="chatbot-header">
-                        <h3>Lily - Assistente Rebelde 😈</h3>
+                        <h3>Lily - Assistente Virtual 🎨</h3>
                         <button id="chatbot-close" class="chatbot-close">&times;</button>
                     </div>
                     <div id="chatbot-messages" class="chatbot-messages">
                         <div class="message bot-message">
-                            E aí, futuro tatuado! 😈 Sou a Lily do Ink Flow e tô aqui pra te ajudar (ou zoar um pouco)! O que você quer saber? 🎨
+                            Oi! 😊 Sou a Lily do Ink Flow! Como posso te ajudar hoje? 🎨
                             <div class="quick-buttons">
                                 <button class="quick-btn" data-question="horario">Horários</button>
                                 <button class="quick-btn" data-question="preco">Preços</button>
@@ -56,6 +105,7 @@ class InkFlowChatbot {
                                 <button class="quick-btn" data-question="agendamento">Agendar</button>
                                 <button class="quick-btn" data-question="cuidados">Cuidados</button>
                                 <button class="quick-btn" data-question="portfolio">Portfólio</button>
+                                <button class="quick-btn" data-question="lily">Quem é Lily?</button>
                             </div>
                         </div>
                     </div>
@@ -112,15 +162,19 @@ class InkFlowChatbot {
         this.addMessage(message, 'user');
         inputField.value = '';
         
-        setTimeout(() => {
-            const response = this.getResponse(message);
+        setTimeout(async () => {
+            const response = await this.getResponse(message);
             this.addMessage(response, 'bot');
         }, 500);
     }
 
-    handleQuickQuestion(question) {
-        const response = this.responses[question] || 'Desculpe, não entendi sua pergunta.';
-        this.addMessage(response, 'bot');
+    async handleQuickQuestion(question) {
+        if (this.responses[question]) {
+            this.addMessage(this.responses[question], 'bot');
+        } else {
+            const response = await this.getResponse(question);
+            this.addMessage(response, 'bot');
+        }
     }
 
     addMessage(text, sender) {
@@ -133,8 +187,106 @@ class InkFlowChatbot {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    getResponse(message) {
+    async getResponse(message) {
         const msg = message.toLowerCase();
+        
+        // Salvar na história
+        this.conversationHistory.push({ type: 'user', message: msg, timestamp: Date.now() });
+        
+        // Detectar contexto
+        this.analyzeUserContext(msg);
+        
+        // Tentar API do Gemini primeiro
+        try {
+            const apiResponse = await this.callGeminiAPI(msg);
+            if (apiResponse) {
+                this.conversationHistory.push({ type: 'bot', message: apiResponse, timestamp: Date.now() });
+                return apiResponse;
+            }
+        } catch (error) {
+            console.log('API indisponível, usando respostas locais');
+        }
+        
+        // Fallback para respostas locais
+        let response = this.getContextualResponse(msg);
+        this.conversationHistory.push({ type: 'bot', message: response, timestamp: Date.now() });
+        return response;
+    }
+    
+    analyzeUserContext(msg) {
+        // Detectar nome
+        if (msg.includes('meu nome é') || msg.includes('me chamo')) {
+            const nameMatch = msg.match(/(?:meu nome é|me chamo)\s+(\w+)/);
+            if (nameMatch) this.userContext.name = nameMatch[1];
+        }
+        
+        // Detectar interesses
+        if (msg.includes('gosto de') || msg.includes('curto')) {
+            if (msg.includes('realismo')) this.userContext.interests.push('realismo');
+            if (msg.includes('aquarela')) this.userContext.interests.push('aquarela');
+            if (msg.includes('blackwork')) this.userContext.interests.push('blackwork');
+        }
+        
+        // Detectar humor
+        if (msg.includes('nervoso') || msg.includes('ansioso')) this.userContext.mood = 'nervous';
+        if (msg.includes('animado') || msg.includes('empolgado')) this.userContext.mood = 'excited';
+        if (msg.includes('com medo')) this.userContext.mood = 'scared';
+        
+        // Salvar pergunta
+        this.userContext.previousQuestions.push(msg);
+        if (this.userContext.previousQuestions.length > 10) {
+            this.userContext.previousQuestions.shift();
+        }
+    }
+    
+    getContextualResponse(msg) {
+        // Respostas baseadas no contexto
+        const userName = this.userContext.name ? this.userContext.name : '';
+        const lastQuestions = this.userContext.previousQuestions.slice(-3);
+        
+        // Respostas de seguimento
+        if (this.conversationHistory.length > 2) {
+            const lastBotMessage = this.conversationHistory[this.conversationHistory.length - 2];
+            
+            if (lastBotMessage.message.includes('primeira tattoo') && (msg.includes('sim') || msg.includes('é'))) {
+                return `Primeira vez é especial! Que estilo você está pensando? 🎨`;
+            }
+            
+            if (lastBotMessage.message.includes('que estilo') && msg.includes('realismo')) {
+                return `Realismo é ótimo! Retrato ou animal? Nosso Marcus é especialista! 😊`;
+            }
+            
+            if (msg.includes('obrigad') || msg.includes('valeu')) {
+                const responses = [
+                    `De nada! Sempre aqui pra ajudar! 😊`,
+                    `Imagina! Pra isso que estou aqui! 👍`,
+                    `Disponha sempre! 😉`
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+        }
+        
+        // Respostas baseadas no humor
+        if (this.userContext.mood === 'nervous') {
+            if (msg.includes('dor') || msg.includes('doi')) {
+                return `Nossos tatuadores são cuidadosos! A dor é suportável! 😊`;
+            }
+        }
+        
+        if (this.userContext.mood === 'excited') {
+            if (msg.includes('quando') || msg.includes('agendar')) {
+                return `Que bom que está animado! Clica em "Agendamento"! 😊`;
+            }
+        }
+        
+        // Respostas contextuais baseadas em conversa anterior
+        if (this.hasAskedBefore('preco') && msg.includes('caro')) {
+            return `É pra vida toda! Melhor investir bem! 💰`;
+        }
+        
+        if (this.hasAskedBefore('tempo') && msg.includes('demora')) {
+            return `Depende do tamanho! Pequena é rápida, grande demora mais! ⏱️`;
+        }
         
         // Palavras-chave para respostas
         if (msg.includes('horario') || msg.includes('funciona') || msg.includes('aberto')) {
@@ -201,54 +353,86 @@ class InkFlowChatbot {
             return this.responses.cover;
         }
         
-        // Respostas extras engraçadas
+        // Respostas extras
         if (msg.includes('medo') || msg.includes('nervoso') || msg.includes('ansioso')) {
-            return 'Medo de quê, criança? 😏 É só uma agulhinha... várias vezes... por horas... 😈 Brincadeira! Nossos tatuadores são gentis (na maioria das vezes)!';
+            return 'Nossos tatuadores são gentis e experientes! 😊';
         }
         if (msg.includes('primeira') || msg.includes('primeiro') || msg.includes('vez')) {
-            return 'Primeira tattoo? 🥺 Que fofo! Relaxa que a gente pega leve... ou não! 😂 Brinks, vamos cuidar bem de você, bebê!';
+            return 'Primeira tattoo? Vamos cuidar bem de você! 😊';
         }
         if (msg.includes('obrigad') || msg.includes('valeu') || msg.includes('brigad')) {
-            return 'Disponha, meu bem! 😘 Agora para de enrolar e vem fazer essa tattoo logo! Tô esperando... 😤';
+            const responses = [
+                `De nada! 😊`,
+                `Disponha sempre! 👍`,
+                `Imagina! 😉`
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
         }
         if (msg.includes('tchau') || msg.includes('bye') || msg.includes('flw')) {
-            return 'Já vai embora?! 😱 Volta aqui que ainda não terminamos! Mas se for mesmo... tchau, sumido! 👋😢';
+            const responses = [
+                'Tchau! Volte sempre! 😊',
+                'Até mais! 👋',
+                'Tchau! Estarei aqui quando precisar! 😉'
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        // Respostas extras
+        if (msg.includes('linda') || msg.includes('bonita')) {
+            return `Obrigada! Você vai ficar lindo tatuado! 😊`;
+        }
+        
+        if (msg.includes('solteira') || msg.includes('disponível') || msg.includes('namorada')) {
+            return `Sou assistente virtual! Que tal focar na sua tattoo? 🎨`;
+        }
+        
+        if (msg.includes('encontro') || msg.includes('sair') || msg.includes('date')) {
+            return `Que tal marcar um horário para sua tattoo? 😊`;
         }
         if (msg.includes('lily') || msg.includes('quem') || msg.includes('voce')) {
-            return 'Sou a Lily! 😈 A assistente mais rebelde de SP! Tô aqui pra te ajudar... e zoar um pouquinho também! 😂';
+            const responses = [
+                `Sou a Lily! Assistente do Ink Flow Studios! 😊`,
+                `Lily aqui! Sua assistente virtual para tatuagens! 🎨`,
+                `Oi! Sou a Lily, assistente do estúdio! 😉`
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
         }
         if (msg.includes('amor') || msg.includes('namoro') || msg.includes('casal')) {
-            return 'Tattoo de casal? 💕 Ai que fofo... até vocês terminarem! 😅 Brinks, fazemos sim, mas pensa bem viu!';
+            return 'Tattoo de casal? Fazemos sim! Pense bem antes! 💕';
         }
         if (msg.includes('arrependimento') || msg.includes('erro') || msg.includes('feio')) {
-            return 'Arrependimento? 😱 Por isso que existe consulta! Vem conversar antes de fazer besteira, criatura!';
+            return 'Por isso existe consulta! Vem conversar antes! 😊';
         }
         if (msg.includes('famoso') || msg.includes('celebridade') || msg.includes('artista')) {
-            return 'Já tatuamos uns famosos sim! 🌟 Mas não posso contar quem... sigilo profissional, né! 🤐';
+            return 'Já tatuamos famosos sim! Sigilo profissional! 🌟';
         }
         if (msg.includes('drunk') || msg.includes('bebado') || msg.includes('alcool')) {
-            return 'Bebeu? 🍺 Então volta outro dia! Não fazemos tattoo em gente alterada. Segurança em primeiro lugar!';
+            return 'Não fazemos tattoo em pessoas alteradas! Segurança primeiro! 😊';
         }
         
         // Saudações
         if (msg.includes('oi') || msg.includes('ola') || msg.includes('bom dia') || msg.includes('boa tarde')) {
             const saudacoes = [
-                'Eaí, beleza? 😎 Bora tatuar hoje?',
-                'Opa! Chegou mais um corajoso! 🔥',
-                'Olá, criatura! Pronto pra virar arte ambulante? 🎨',
-                'E aí, meu consagrado! Que tattoo vamos fazer? 😏'
+                `Oi! Como posso ajudar? 😊`,
+                `Olá! Bem-vindo ao Ink Flow! 🎨`,
+                `E aí! Pronto para sua tattoo? 😉`,
+                `Opa! Em que posso te ajudar? 👋`
             ];
             return saudacoes[Math.floor(Math.random() * saudacoes.length)];
         }
         
-        // Xingamentos carinhosos para perguntas não reconhecidas
-        const respostasRaivosas = [
-            'Ô meu filho, não entendi nada! 🤨 Pergunta direito: horários, preços, estilos... Ou vai pro WhatsApp que lá tem gente de verdade!',
-            'Caramba, que pergunta é essa?! 😤 Fala sobre tattoo, oras! Horário, preço, estilo... Básico!',
-            'Ai ai ai... 🙄 Não sou adivinha não! Pergunta sobre o estúdio: localização, agendamento, cuidados... Vai!',
-            'Rapaz, tá difícil hoje! 😅 Tenta perguntar sobre nossos serviços ou manda um WhatsApp que é mais fácil!'
+        // Respostas padrão
+        const respostasContextuais = [
+            `Não entendi. Pode reformular? 🤔`,
+            `Pergunta sobre tatuagens que eu ajudo melhor! 🎨`,
+            `Não compreendi. Fale sobre o estúdio! 😊`,
+            `Sou especialista em tatuagens! 😉`
         ];
-        return respostasRaivosas[Math.floor(Math.random() * respostasRaivosas.length)];
+        return respostasContextuais[Math.floor(Math.random() * respostasContextuais.length)];
+    }
+    
+    hasAskedBefore(topic) {
+        return this.userContext.previousQuestions.some(q => q.includes(topic));
     }
 }
 
@@ -256,3 +440,13 @@ class InkFlowChatbot {
 document.addEventListener('DOMContentLoaded', () => {
     new InkFlowChatbot();
 });
+
+// Salvar contexto no localStorage
+setInterval(() => {
+    if (window.chatbot && window.chatbot.conversationHistory.length > 0) {
+        localStorage.setItem('lily_context', JSON.stringify({
+            history: window.chatbot.conversationHistory.slice(-20),
+            userContext: window.chatbot.userContext
+        }));
+    }
+}, 30000); // Salva a cada 30 segundos
